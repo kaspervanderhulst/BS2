@@ -1,0 +1,30 @@
+#Enter a path to your import CSV file
+$ADUsers = Get-Content C:\Users\Administrator\Desktop\file.csv
+
+for ($i = 0; $i -lt $ADUsers.Length; $i++)
+{
+	Write-Output ([string]$ADUsers[$i])
+	$firstname = ([string]$ADUsers[$i]).Split(' ')[1]
+	
+	$lastname = ([string]$ADUsers[$i]).Split(' ')[2]
+	$fullname = "$firstname $lastname"
+	$logonname = "$firstname.$lastname"
+	$OU = "CN=Users,DC=cosci,DC=be"
+	$domain = $env:userdnsdomain
+	$Password = "School123"
+	$Pass = ConvertTo-SecureString $Password -AsPlainText -Force
+	$BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Pass)
+	if (Get-ADUser -F {SamAccountName -eq $logonname})
+       	{
+               	#If user does exist, output a warning message
+               	Write-Warning "A user account $Username has already exist in Active Directory."
+       	}
+	else
+	{
+		Write-Host "Creating Active Directory user account now" -ForegroundColor:Green
+ 
+		#Creating user account with the information you inputted.
+		New-ADUser -Name $fullname -GivenName $firstname -Surname $lastname -DisplayName $fullname -SamAccountName $logonname -UserPrincipalName $logonname@$Domain -AccountPassword $pass -Enabled $true -Path $OU  -Confirm:$false
+	
+	}	
+}

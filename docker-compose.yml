@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+ db:
+  image: mysql:5.7
+  command: --default-authentication-plugin=mysql_native_password
+  restart: always
+  environment:
+   MYSQL_USER: pdb
+   MYSQL_PASSWORD: pdbpass
+   MYSQL_DATABASE: pdb
+   MYSQL_RANDOM_ROOT_PASSWORD: 'true'
+   MYSQL_PORT: 3306
+  expose: 
+   - "3306"
+ backend:
+  image: kasper658658/backend:latest
+  restart: always
+  ports: 
+  - "8000:8080"
+  environment:
+   MYSQL_HOST: db
+ frontend:
+  image: coscicorp/catalog_frontend
+  restart: always
+  ports: 
+  - "80:3000"
